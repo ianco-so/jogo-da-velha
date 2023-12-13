@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name  = "viewport" 
+            content = "width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>Tic-Tac-Toe</title>
+    </head>
+    <body>
+        <div id="game-container">
+            <label for="board-size">Choose the board size</label>
+            <select id="board-size">
+                <option value="3">3x3</option>
+                <option value="4">4x4</option>
+                <option value="5">5x5</option>
+                <option value="6">6x6</option>
+                <option value="7">7x7</option>
+                <option value="8">8x8</option>
+                <option value="9">9x9</option>
+                <option value="10">10x10</option>
+            </select>
+
+            <label for="mode">Game Mode</label>
+            <select id="mode">
+                <option value="human">Human vs Human</option>
+                <option value="computer">Computer vs Human</option>
+            </select>
+
+            <!-- Use um input do tipo checkbox para criar um switch -->
+            <div class="theme-switch">
+                <input type="checkbox" id="theme">
+                <label for="theme" id="theme-label">Dark Theme</label>
+            </div>
+
+            <div id="board"></div>
+            <div id="status"></div>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
