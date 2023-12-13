@@ -28,13 +28,13 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < tamanhoTabuleiro; i++) {
             for (let j = 0; j < tamanhoTabuleiro; j++) {
                 // Cria uma celula e adiciona ao tabuleiro
-                const cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.dataset.row = i;
-                cell.dataset.col = j;
-                cell.textContent = tabuleiro[i][j];
-                cell.addEventListener("click", handleCellClick);
-                desenhoTabuleiro.appendChild(cell);
+                const celula = document.createElement("div");
+                celula.classList.add("celula");
+                celula.dataset.row = i;
+                celula.dataset.col = j;
+                celula.textContent = tabuleiro[i][j];
+                celula.addEventListener("click", handleCellClick);
+                desenhoTabuleiro.appendChild(celula);
             }
         }
     }
@@ -77,8 +77,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function computerMove() {
         const emptyCells = [];
         tabuleiro.forEach((row, i) => {
-            row.forEach((cell, j) => {
-                if (cell === "") {
+            row.forEach((celula, j) => {
+                if (celula === "") {
                     emptyCells.push({ row: i, col: j });
                 }
             });
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function checkWin() {
         // Check rows
         for (let i = 0; i < tamanhoTabuleiro; i++) {
-            if (tabuleiro[i].every(cell => cell === currentPlayer)) {
+            if (tabuleiro[i].every(celula => celula === currentPlayer)) {
                 return true;
             }
         }
@@ -135,9 +135,9 @@ document.addEventListener("DOMContentLoaded", function () {
         desenharTabuleiro(); // Re-render the board to reflect the winning move
 
         // Disable further clicks on the board
-        desenhoTabuleiro.querySelectorAll(".cell").forEach(cell => {
-            cell.removeEventListener("click", handleCellClick);
-            cell.style.cursor = "default";
+        desenhoTabuleiro.querySelectorAll(".celula").forEach(celula => {
+            celula.removeEventListener("click", handleCellClick);
+            celula.style.cursor = "default";
         });
 
         // Display the winner
@@ -148,9 +148,9 @@ document.addEventListener("DOMContentLoaded", function () {
         desenharTabuleiro(); // Re-renderize o tabuleiro para refletir o último movimento
 
         // Desative os cliques adicionais no tabuleiro
-        desenhoTabuleiro.querySelectorAll(".cell").forEach(cell => {
-            cell.removeEventListener("click", handleCellClick);
-            cell.style.cursor = "default";
+        desenhoTabuleiro.querySelectorAll(".celula").forEach(celula => {
+            celula.removeEventListener("click", handleCellClick);
+            celula.style.cursor = "default";
         });
 
         // Exiba a mensagem de empate em vermelho
