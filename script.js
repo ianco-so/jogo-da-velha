@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 tabuleiro[i][j] = "";
             }
         }
+        jogadorAtual = "O"; //  É setado para "O" pois desenharTabuleiro() vai,
+                            // automáticamente mudar para "X" e o jogo começará com "X",
+                            // como tem que ser;
         desenharTabuleiro();
     }
     
@@ -37,20 +40,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 desenhoTabuleiro.appendChild(celula);
             }
         }
+
+        if (ehVitoria()) {
+            finalizaVitoria();
+        } else if (ehEmpate()) {
+            finalizaEmpate();
+        } else {
+            jogadorAtual = jogadorAtual === "X" ? "O" : "X";
+            mudarJogador();
+        }
     }
 
     /**
      *  Ao clicar em uma celula do tabuleiro,
      * verifica se a celula está vazia e se estiver, 
      * preenche com o simbolo do jogador atual.
-     *
-     *  Verifica se o jogo terminou com vitória ou empate
-     * e encerra o jogo em qualquer um dos casos.
      * 
-     *  Caso o jogo não tenha terminado muda o jogador e
-     * exibe a mensagem no campo de mensagens. E se o modo
-     * de jogo selecionado for "Maquina". e for a vez da maquina,
-     * então faz o movimento do computador.
+     *  Se o modo de jogo selecionado for "Maquina". 
+     * e for a vez da maquina, então faz o movimento
+     * do computador.
      * @param {} event
      */
     function clickNaCelula(event) {
@@ -60,20 +68,16 @@ document.addEventListener("DOMContentLoaded", function () {
         if (tabuleiro[lin][col] === "") {
             tabuleiro[lin][col] = jogadorAtual;
             desenharTabuleiro();
-            if (ehVitoria()) { 
-                finalizaVitoria();
-            } else if (ehEmpate()) {
-                finalizaEmpate();
-            } else {
-                jogadorAtual = jogadorAtual === "X" ? "O" : "X";
-                mudarJogador();
-                if (modoEscolhido.value === "maquina" && jogadorAtual === "O") {
-                    moveMaquina();
-                }
+
+            if (modoEscolhido.value === "maquina" && jogadorAtual === "O") {
+                moveMaquina();
             }
         }
     }
-
+    /**
+     * Seleciona aleatóriamente uma das celulas vazias do tabuleiro
+     * para a máquina fazer sua jogada.
+     */
     function moveMaquina() {
         const celulasVazias = [];
         tabuleiro.forEach((lin, i) => {
@@ -87,17 +91,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const movimentoMaquina = celulasVazias[Math.floor(Math.random() * celulasVazias.length)];
         tabuleiro[movimentoMaquina.lin][movimentoMaquina.col] = jogadorAtual;
         desenharTabuleiro();
-
-        if (ehVitoria()) {
-            finalizaVitoria();
-        } else if (ehEmpate()) {
-            finalizaEmpate();
-        } else {
-            jogadorAtual = jogadorAtual === "X" ? "O" : "X";
-            mudarJogador();
-        }
     }
 
+    /**
+     * Decide se algum jogador venceu ou não
+     * @returns true se algum jogar venceu e false se o jogo ainda está em aberto
+     */
     function ehVitoria() {
         // Verfica as linhas
         for (let i = 0; i < tamanhoTabuleiro; i++) {
@@ -141,7 +140,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
-
+    /**
+     * Decide se o jogo terminou em Velha ou se ainda tem jogo para acontecer
+     * @returns true se terminou em empate e false caso contrário
+     */
     function ehEmpate() {
         for (let i = 0; i < tamanhoTabuleiro; i++) {
             for (let j = 0; j < tamanhoTabuleiro; j++) {
@@ -153,6 +155,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return true; // Todas as células estão preenchidas, o jogo está empatado
     }
 
+    /**
+     * Finaliza o jogo e exibe uma mensagem de vitória
+     */
     function finalizaVitoria() {
         desenhoTabuleiro.querySelectorAll(".celula").forEach(celula => {
             celula.removeEventListener("click", clickNaCelula); // Remove o EventListener para que o jogador não possa mais clicar nas células
@@ -162,6 +167,9 @@ document.addEventListener("DOMContentLoaded", function () {
         mensagem.textContent = `O VENCEDOR É '${jogadorAtual}'!`;
     }
 
+    /**
+     * Finaliza o jogo e exibe uma mensagem de empate :-(
+     */
     function finalizaEmpate() {
         desenhoTabuleiro.querySelectorAll(".celula").forEach(celula => {
             celula.removeEventListener("click", clickNaCelula);
@@ -170,7 +178,10 @@ document.addEventListener("DOMContentLoaded", function () {
         mensagem.textContent = "DEU VELHA!";    
     };
 
-
+    /**
+     * Muda a mensagem no rodapé do jogo avisando
+     * qual o próximo jogador a fazer seu movimento
+     */
     function mudarJogador() {
         mensagem.textContent = `Jogador Atual: ${jogadorAtual}`;
     };
