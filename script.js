@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const mensagem = document.getElementById("mensagem");
 
     let tamanhoTabuleiro = parseInt(tamanhoTabuleiroEscolhido.value);
-    let currentPlayer = "X"; // sempre começa com "X"
+    let jogadorAtual = "X";
     let tabuleiro = [];
 
     function iniciarTabuleiro() {
@@ -30,10 +30,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Cria uma celula e adiciona ao tabuleiro
                 const celula = document.createElement("div");
                 celula.classList.add("celula");
-                celula.dataset.row = i;
+                celula.dataset.lin = i;
                 celula.dataset.col = j;
                 celula.textContent = tabuleiro[i][j];
-                celula.addEventListener("click", handleCellClick);
+                celula.addEventListener("click", clickNaCelula);
                 desenhoTabuleiro.appendChild(celula);
             }
         }
@@ -53,74 +53,96 @@ document.addEventListener("DOMContentLoaded", function () {
      * então faz o movimento do computador.
      * @param {} event
      */
-    function handleCellClick(event) {
-        const row = parseInt(event.target.dataset.row);
+    function clickNaCelula(event) {
+        const lin = parseInt(event.target.dataset.lin);
         const col = parseInt(event.target.dataset.col);
 
-        if (tabuleiro[row][col] === "") {
-            tabuleiro[row][col] = currentPlayer;
+        if (tabuleiro[lin][col] === "") {
+            tabuleiro[lin][col] = jogadorAtual;
             desenharTabuleiro();
-            if (checkWin()) { 
-                endGameWin();
-            } else if (checkDraw()) {
-                endGameDraw();
+            if (ehVitoria()) { 
+                finalizaVitoria();
+            } else if (ehEmpate()) {
+                finalizaEmpate();
             } else {
-                currentPlayer = currentPlayer === "X" ? "O" : "X";
+                jogadorAtual = jogadorAtual === "X" ? "O" : "X";
                 mudarJogador();
-                if (modoEscolhido.value === "computer" && currentPlayer === "O") {
-                    computerMove();
+                if (modoEscolhido.value === "maquina" && jogadorAtual === "O") {
+                    moveMaquina();
                 }
             }
         }
     }
 
-    function computerMove() {
-        const emptyCells = [];
-        tabuleiro.forEach((row, i) => {
-            row.forEach((celula, j) => {
+    function moveMaquina() {
+        const celulasVazias = [];
+        tabuleiro.forEach((lin, i) => {
+            lin.forEach((celula, j) => {
                 if (celula === "") {
-                    emptyCells.push({ row: i, col: j });
+                    celulasVazias.push({ lin: i, col: j });
                 }
             });
         });
 
-        const randomMove = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        tabuleiro[randomMove.row][randomMove.col] = currentPlayer;
+        const movimentoMaquina = celulasVazias[Math.floor(Math.random() * celulasVazias.length)];
+        tabuleiro[movimentoMaquina.lin][movimentoMaquina.col] = jogadorAtual;
         desenharTabuleiro();
 
-        if (checkWin()) {
-            endGameWin();
-        } else if (checkDraw()) {
-            endGameDraw();
+        if (ehVitoria()) {
+            finalizaVitoria();
+        } else if (ehEmpate()) {
+            finalizaEmpate();
         } else {
-            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            jogadorAtual = jogadorAtual === "X" ? "O" : "X";
             mudarJogador();
         }
     }
 
-    function checkWin() {
-        // Check rows
+    function ehVitoria() {
+        // Verfica as linhas
         for (let i = 0; i < tamanhoTabuleiro; i++) {
-            if (tabuleiro[i].every(celula => celula === currentPlayer)) {
-                return true;
+            for (let j = 0; j < tamanhoTabuleiro; j++) {
+                if (tabuleiro[i][j] !== jogadorAtual) {
+                    break;
+                }
+                if (j === tamanhoTabuleiro - 1) {
+                    return true;
+                }
             }
         }
-        // Check columns
+        // Verifica as colunas
         for (let j = 0; j < tamanhoTabuleiro; j++) {
-            if (tabuleiro.every(row => row[j] === currentPlayer)) {
+            for (let i = 0; i < tamanhoTabuleiro; i++) {
+                if (tabuleiro[i][j] !== jogadorAtual) {
+                    break;
+                }
+                if (i === tamanhoTabuleiro - 1) {
+                    return true;
+                }
+            }
+        }
+        // Verifica a diagonal principal
+        for (let i = 0; i < tamanhoTabuleiro; i++) {
+            if (tabuleiro[i][i] !== jogadorAtual) {
+                break;
+            }
+            if (i === tamanhoTabuleiro - 1) {
                 return true;
             }
         }
-        // Check diagonals
-        if (tabuleiro.every((row, index) => row[index] === currentPlayer) ||
-            tabuleiro.every((row, index) => row[tamanhoTabuleiro - index - 1] === currentPlayer)) {
-            return true;
+        // Verifica a diagonal secundária
+        for (let i = 0; i < tamanhoTabuleiro; i++) {
+            if (tabuleiro[i][tamanhoTabuleiro - i - 1] !== jogadorAtual) {
+                break;
+            }
+            if (i === tamanhoTabuleiro - 1) {
+                return true;
+            }
         }
-        return false;
     }
     
 
-    function checkDraw() {
+    function ehEmpate() {
         for (let i = 0; i < tamanhoTabuleiro; i++) {
             for (let j = 0; j < tamanhoTabuleiro; j++) {
                 if (tabuleiro[i][j] === "") {
@@ -131,35 +153,26 @@ document.addEventListener("DOMContentLoaded", function () {
         return true; // Todas as células estão preenchidas, o jogo está empatado
     }
 
-    function endGameWin() {
-        desenharTabuleiro(); // Re-render the board to reflect the winning move
-
-        // Disable further clicks on the board
+    function finalizaVitoria() {
         desenhoTabuleiro.querySelectorAll(".celula").forEach(celula => {
-            celula.removeEventListener("click", handleCellClick);
-            celula.style.cursor = "default";
+            celula.removeEventListener("click", clickNaCelula); // Remove o EventListener para que o jogador não possa mais clicar nas células
+            celula.style.cursor = "default"; // Muda o cursor para o padrão para indicar que o jogador não pode mais clicar nas células
         });
-
-        // Display the winner
-        mensagem.textContent = `O VENCEDOR É '${currentPlayer}'!`;
+        // Exibe a mensagem de vitória
+        mensagem.textContent = `O VENCEDOR É '${jogadorAtual}'!`;
     }
 
-    function endGameDraw() {
-        desenharTabuleiro(); // Re-renderize o tabuleiro para refletir o último movimento
-
-        // Desative os cliques adicionais no tabuleiro
+    function finalizaEmpate() {
         desenhoTabuleiro.querySelectorAll(".celula").forEach(celula => {
-            celula.removeEventListener("click", handleCellClick);
+            celula.removeEventListener("click", clickNaCelula);
             celula.style.cursor = "default";
         });
-
-        // Exiba a mensagem de empate em vermelho
         mensagem.textContent = "DEU VELHA!";    
     };
 
 
     function mudarJogador() {
-        mensagem.textContent = `Jogador Atual: ${currentPlayer}`;
+        mensagem.textContent = `Jogador Atual: ${jogadorAtual}`;
     };
 
     // Event listeners
