@@ -22,13 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         renderBoard();
     }
-
-    const body = document.body;
-    const themeButton = document.getElementById("theme");
-    
-    themeButton.addEventListener("click", function () {
-        body.classList.toggle("dark-theme");
-    });
     
     function renderBoard() {
         boardContainer.innerHTML = "";
@@ -63,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } 
             else {
                 currentPlayer = currentPlayer === "X" ? "O" : "X";
-                updateStatus();
+                mudaJogador();
                 if (seletectedMode.value === "computer" && currentPlayer === "O") {
                     computerMove();
                 }
@@ -91,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
             endGameDraw();
         } else {
             currentPlayer = currentPlayer === "X" ? "O" : "X";
-            updateStatus();
+            mudaJogador();
         }
     }
 
@@ -151,23 +144,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         // Exiba a mensagem de empate em vermelho
-        status.textContent = "JOGO EMPATADO!!!";
-        status.style.color = "red";
-    }
+        status.textContent = "DEU VELHA!";    
+    };
 
 
-    function updateStatus() {
+    function mudaJogador() {
         status.textContent = `Jogador Atual: ${currentPlayer}`;
-    }
+    };
 
     // Event listeners
+    // Caso o tamanho do tabuleiro seja alterado, muda a variável boardSize e reinicie o tabuleiro
     selectedBoardSize.addEventListener("change", function () {
         boardSize = parseInt(selectedBoardSize.value);
         initializeBoard();
     });
 
+    // Caso o modo seja alterado, reinicie o tabuleiro
     seletectedMode.addEventListener("change", initializeBoard);
 
-    // Initialize the game
+    // Inicia o tabuleiro
     initializeBoard();
 });
