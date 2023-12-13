@@ -8,9 +8,9 @@
         <title>Jogo da velha</title>
     </head>
     <body>
-        <div id="game">
-            <label for="board-size">Tamanho</label>
-            <select id="board-size">
+        <div id="jogo">
+            <label for="tamanho-tabuleiro">Tamanho</label>
+            <select id="tamanho-tabuleiro">
                 <option value="3">3x3</option>
                 <option value="4">4x4</option>
                 <option value="5">5x5</option>
@@ -21,14 +21,14 @@
                 <option value="10">10x10</option>
             </select>
 
-            <label for="mode">Modo</label>
-            <select id="mode">
+            <label for="modo">Modo</label>
+            <select id="modo">
                 <option value="human">Humano x Humano</option>
                 <option value="computer">Maquina x Humano</option>
             </select>
 
-            <div id="board"></div>
-            <div id="status"></div>
+            <div id="tabuleiro"></div>
+            <div id="mensagem"></div>
         </div>
         <script src="script.js"></script>
     </body>

@@ -3,11 +3,11 @@ body {
     text-align: center;
 }
 
-#game {
+#jogo {
     margin: 20px;
 }
 
-#board {
+#tabuleiro {
     display: grid;
     grid-template-columns: repeat(3, 50px);
     grid-gap: 5px;
@@ -15,7 +15,7 @@ body {
     background-color: #333;
 }
 
-#status {
+#mensagem {
     margin-top: 10px;
     font-weight: bold;
     color: green;
